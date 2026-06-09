@@ -1,0 +1,46 @@
+services:
+
+  mongodb:
+
+    image: mongo:8
+
+    container_name: workflow-mongodb
+
+    ports:
+      - "27017:27017"
+
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+
+    build:
+      context: ./backend
+
+    container_name: workflow-backend
+
+    ports:
+      - "5000:5000"
+
+    depends_on:
+      - mongodb
+
+    environment:
+      PORT: 5000
+      MONGO_URI: mongodb://mongodb:27017/workflow-platform
+
+  frontend:
+
+    build:
+      context: ./frontend
+
+    container_name: workflow-frontend
+
+    ports:
+      - "5173:5173"
+
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
